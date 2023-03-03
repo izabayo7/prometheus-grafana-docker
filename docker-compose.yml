@@ -1,0 +1,35 @@
+version: '3.5'
+services:
+  prometheus:
+    container_name: sidometer_prometheus
+    build:
+      context: ./prometheus/
+      dockerfile: Dockerfile
+    image: sidometer/prometheus
+    ports:
+      - 9000:9090
+    volumes:
+      - prometheus-data:/prometheus
+    command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - sidonet
+  grafana:
+    container_name: sidometer_grafana
+    build:
+      context: ./grafana/
+      dockerfile: Dockerfile
+    image: sidometer/grafana
+    ports:
+      - 3001:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - sidonet
+volumes:
+  prometheus-data:
+  grafana-data:
+networks:
+  sidonet:
+    name: sidonet
